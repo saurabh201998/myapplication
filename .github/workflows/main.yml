@@ -1,6 +1,14 @@
-name: CI/CD Pipeline
-
-on: [push]
+name: CI-CD-Pipeline-to-AWS-Elasticbeanstalk
+env:
+  EB_PACKAGE_S3_BUCKET_NAME : "flask-app-githubaction"
+  EB_APPLICATION_NAME       : "myflaskapplication"
+  EB_ENVIRONMENT_NAME       : "Myflaskapplication-env"
+  DEPLOY_PACKAGE_NAME       : "
+  
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
