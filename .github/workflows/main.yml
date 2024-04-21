@@ -3,7 +3,8 @@ env:
   EB_PACKAGE_S3_BUCKET_NAME : "flask-app-githubaction"
   EB_APPLICATION_NAME       : "myflaskapplication"
   EB_ENVIRONMENT_NAME       : "Myflaskapplication-env"
-  DEPLOY_PACKAGE_NAME       : "
+  DEPLOY_PACKAGE_NAME       : "FLASK-APP-${{ github.sha }}.zip"
+  AWS_REGION_NAME           : "US-east-1"
   
 on:
   push:
@@ -11,34 +12,28 @@ on:
       - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    my_ci_pipeline:
+        runs-on: ubuntu-latest
+ 
+        steps:
+         - name: Git clone our repository
+           uses: actions/checkout@v1
 
-    steps:
-    - uses: actions/checkout@v2
+         - name: Create ZIP deployment package
+           run : zip -r ${{ env. DEPLOY_PACKAGE_NAME }} ./ -x *.git*
+      
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+         - name: Configure my AWS credentials
+           uses: aws-action/configure-aws-credentials@v1
+           with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+            aws-region           : ${{ env.AWS_REGION_NAME}}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+         - name: Copy our Deployment package to s3 bucket
+           run : aws s3 cp ${{ env. DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME}}/
 
-    - name: Run tests
-      run: |
-        python -m unittest discover
-
-    - name: Deploy to AWS Elastic Beanstalk
-      if: success()
-      uses: einaregilsson/beanstalk-deploy@v14
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-        application_name: your-application-name
-        environment_name: your-environment-name
-        version_label: ${{ github.run_id }}
-        region: your-region
-        deployment_package: your-deployment-package.zip
+         - name: Print nice message on completion of CI Pipeline
+           run : echo"CI Pipeline part finished Successfully"
+           
+ 
