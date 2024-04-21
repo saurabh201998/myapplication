@@ -10,3 +10,4 @@ This is a simple Flask application with a CI/CD pipeline.
 ## Running the Pipeline
 
 The pipeline is automatically run by GitHub Actions every time there's a push to the repository.
+# myapplication
