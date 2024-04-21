@@ -1,6 +1,6 @@
 name: CI-CD-Pipeline-to-AWS-Elasticbeanstalk
 env:
-  EB_PACKAGE_S3_BUCKET_NAME : "flask-app-githubaction"
+  EB_PACKAGE_S3_BUCKET_NAME : "elasticbeanstalk-us-east-1-551181963592"
   EB_APPLICATION_NAME       : "myapplicationflask"
   EB_ENVIRONMENT_NAME       : "Myapplicationflask-env"
   DEPLOY_PACKAGE_NAME       : "FLASK-APP-${{ github.sha }}.zip"
